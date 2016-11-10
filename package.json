@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "watch:build": "node index.js",
+    "build": "node index.js",
+    "watch:build": "WATCH=1 node index.js",
     "deploy": "netlify deploy"
   },
   "dependencies": {

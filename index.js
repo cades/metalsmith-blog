@@ -8,7 +8,7 @@ var robots = require('metalsmith-robots');
 var watch = require('metalsmith-watch');
 var serve = require('metalsmith-serve');
 
-Metalsmith(__dirname)
+var base = Metalsmith(__dirname)
   .source('./src')
   .destination("build")
   .use(drafts())
@@ -17,19 +17,28 @@ Metalsmith(__dirname)
   .use(archivePage())
   .use(layouts('handlebars'))
   .use(robots({
-      "useragent": "*",
-      "disallow": ["/"]
-    }))
-  .use(
-    watch({
-      paths: {
-        "${source}/**/*": "**/*",
-        "layouts/**/*": "**/*"
-      },
-      livereload: true
-    })
-  )
-  .use(serve())
-  .build(function(err) {
-    if (err) throw err;
-  });
+    "useragent": "*",
+    "disallow": ["/"]
+  }))
+
+if (process.env.WATCH) {
+  base = base
+    .use(
+      watch({
+        paths: {
+          "${source}/**/*": "**/*",
+          "layouts/**/*": "**/*"
+        },
+        livereload: true
+      })
+    )
+    .use(serve({port: 8070}))
+    .build(function(err) {
+      if (err) throw err;
+    });
+}
+
+base.build(function(err) {
+  if (err) throw err;
+});
+
